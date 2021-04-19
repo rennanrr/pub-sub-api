@@ -1,13 +1,28 @@
-import amqp from 'amqplib/callback_api';
+import amqp from 'amqplib';
+import config from '../config/config';
 
-const sendMessage = (msg: string) =>
-  amqp.connect('amqp://localhost:5672', (err, connection) => {
-    connection.createChannel((err, channel) => {
-      var q = 'Galley';
-      channel.assertQueue(q, { durable: false });
-      channel.sendToQueue(q, Buffer.from(msg));
-      console.log(" [x] Sent %s", msg);
-    });
-  });
+class Subscriber {
+  channel: any;
 
-  export default { sendMessage }
+  constructor() {
+    this.init();
+  }
+
+  async init() {
+    const connection = await amqp.connect(config.rabbitMQ);
+    const channel = await connection.createChannel();
+    this.channel = channel;
+  }
+
+  async publishMessage(data: {}) {
+    const queue = 'Galley';
+    this.channel.assertQueue(queue, { durable: false });
+    const send = this.channel.sendToQueue(queue, Buffer.from(JSON.stringify(data)));
+    if (send) console.log(`[Publisher] Sent message to queue ${queue}:`);
+    else console.log(`[Publisher] Failed to sent message to queue ${queue}:`)
+    console.log(data);
+    return send
+  }
+}
+
+export default new Subscriber()

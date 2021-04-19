@@ -5,6 +5,7 @@
 const defaultConfig = {
   apiPort: 3000,
   rabbitMQ: 'amqp://localhost:5672',
+  wsPort: 4555
 };
 export type Environment = "prod" | "dev" | "test";
 /**
@@ -15,10 +16,12 @@ const envConfig = {
   prod: {
     apiPort: process.env.PORT,
     rabbitMQ: 'amqp://localhost:5672',
+    wsPort: process.env.PORT
   },
   dev: {
     apiPort: 3000,
     rabbitMQ: 'amqp://localhost:5672',
+    wsPort: 4555
   },
   test: {
     apiPort: 3000,
