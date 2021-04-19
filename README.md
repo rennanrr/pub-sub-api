@@ -14,7 +14,7 @@ Start a Rest API server (Express), receive a HTTP Post on /api/v1/publish, the A
 Start a WebSocket server (Socket.IO), subscribe on "Galley" queue in RabbitMQ Server, on message from RabbitMQ concatenate the body (two strings), and send result by websocket to client.
 
 ## Routes:
-POST - /publish
+POST - /api/v1/publish
 
 ## Get Started
 First, make sure you have [NodeJS](https://nodejs.org/en/download/).
