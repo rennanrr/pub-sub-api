@@ -6,53 +6,56 @@
 - WebSocket (Socket.io)
 - RabbitMQ
 
-## How works
-When receive a HTTP Post on /api/v1/publish, API insert the body in a JSON string and plane the message on "Galley" topic in the queue of RabbitMQ Server.
-
+## Basic Architecture
+There is two Applications (Microservices) on this project:
+- Publisher:
+Start a Rest API server (Express), receive a HTTP Post on /api/v1/publish, the API insert the body into a JSON string and place the message on "Galley" queue of RabbitMQ Server.
+- Worker:
+Start a WebSocket server (Socket.IO), subscribe on "Galley" queue in RabbitMQ Server, on message from RabbitMQ concatenate the body (two strings), and send result by websocket to client.
 
 ## Routes:
+POST - /publish
 
+## Get Started
+First, make sure you have [NodeJS](https://nodejs.org/en/download/).
 
-## Migrations
-The tables skeletons are already set in the folder src/api/models and its migrations in src/api/migrations.
-To start your datebase, it is necessary to create a database called UserDB.
-
-So, open terminal and run this command:
+### RabbitMQ
+To use on your on machine, you can install and run a Docker Image with a RabbitMQ server.
 ```
-NODE_ENV=dev node_modules/.bin/sequelize db:create
-```
-
-### Start Migrations
-Then, run the command below to migrate your models to your database
-```
-NODE_ENV=dev node_modules/.bin/sequelize db:migrate
+docker run --rm -it --hostname my-rabbit -p 15672:15672 -p 5672:5672 rabbitmq:3-management
 ```
 
-### Insert data into your database
-Run the command below to start your database with pre-defined data (there is two users, you can check in src/database/seeders/001-demo-user.js)
+### Install packages
 ```
-NODE_ENV=dev node_modules/.bin/sequelize db:seed:all
-```
-To access with user examples, use these credentials:
-```
-Email: edney.cruz@oowlish.com
-Password: 1234
-```
-```
-Email: rennanrr@hotmail.com
-Password: 1234
+npm install
 ```
 
-### Mistakes happens :)
-If you ran any command wrong, do not freak out. You can revert your migrations with the following command
+### Run Publisher Server
 ```
-NODE_ENV=dev node_modules/.bin/sequelize db:migrate:undo
-
-``
-You can also remove it all
-```
-NODE_ENV=dev node_modules/.bin/sequelize db:migrate:undo:all
-
+npm run dev:publisher
 ```
 
-This command can be run several times until revert the last table created.
+### Run worker Server
+```
+npm run dev:worker
+```
+
+## Environment configuration
+The config environment variables are on file ./src/api/config/config.ts
+The default value is 
+```
+  apiPort: 3000,
+  rabbitMQ: 'amqp://localhost:5672',
+  wsPort: 4555
+```
+
+## About Design Pattern
+There is two microservices on backend:
+- ./src/appPublisher.ts
+- ./src/appSubscriber.ts
+
+On primary files ("app"), server listens are started.
+The input source on Publisher Server is the Express Server (Routes).
+The input source on Subscriber Server is the Subscriber RabbitMQ (Subscriber).
+The wild input data is sent to especific Controller, where are the rules of business.
+After treat data received, Controller call a especific Service to dispatch.

@@ -15,7 +15,7 @@ export type Environment = "prod" | "dev" | "test";
 const envConfig = {
   prod: {
     apiPort: process.env.PORT,
-    rabbitMQ: 'amqp://localhost:5672',
+    rabbitMQ: process.env.URL_RABBITMQ || 'amqp://localhost:5672',
     wsPort: process.env.PORT
   },
   dev: {
