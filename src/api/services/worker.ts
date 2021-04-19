@@ -22,8 +22,7 @@ class Worker {
 
   async sendMessage(response: string) {
     const sent = this.server.send(response);
-    if (sent.connected) console.log(`[Publisher] Sent a notification by socket`)
-    else console.log(`[Publisher] No client connected. Notification was not sent!`)
+    console.log(`[Publisher] Sent a notification by socket`);
   }
 }
 

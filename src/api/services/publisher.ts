@@ -39,9 +39,9 @@ class Publisher {
   async publishMessage(data: {}) {
     const queue = 'Galley';
     this.channel.assertQueue(queue, { durable: false });
-    const send = this.channel.sendToQueue(queue, Buffer.from(JSON.stringify(data)));
+    const send = await this.channel.sendToQueue(queue, Buffer.from(JSON.stringify(data)));
     if (send) console.log(`[Publisher] Sent message to queue ${queue}:`);
-    else console.log(`[Publisher] Failed to sent message to queue ${queue}:`)
+    else console.log(`[Publisher] Failed to sent message to queue ${queue}:`);
     console.log(data);
     return send
   }

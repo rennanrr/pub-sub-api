@@ -6,7 +6,6 @@ class Subscriber {
   channel: any;
 
   constructor() {
-    this.init();
   }
 
   async init() {
@@ -14,6 +13,7 @@ class Subscriber {
       const connection = await this.connectAmqp();
       const channel = await connection.createChannel();
       this.channel = channel;
+      this.listenQueueNotify();
     } catch (error) {
       console.log('[Subscriber] Was not possible to connect to RabbitMQ Server.');
       console.log(error);
@@ -37,7 +37,7 @@ class Subscriber {
     return connection;
   }
 
-  async listenQueueNotify(exchange?: string) {
+  async listenQueueNotify() {
     const queue = 'Galley';
     if (this.channel) {
       this.channel.assertQueue(queue, { durable: false });
@@ -50,6 +50,7 @@ class Subscriber {
         Worker.handleMessage(message);
       }, { noAck: true });
     }
+    else this.init();
   }
 }
 
