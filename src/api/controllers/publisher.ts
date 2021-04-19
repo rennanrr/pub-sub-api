@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Service from "../services/publisher";
+import Service from "../services/Publisher";
 
 const publish = async (req: Request, res: Response) => {
   try {
