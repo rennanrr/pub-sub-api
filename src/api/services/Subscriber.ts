@@ -20,7 +20,7 @@ class Subscriber {
     if (!this.channel) await this.init();
     this.channel.assertQueue(queue, { durable: false });
     this.channel.prefetch(1);
-    console.log(`[Subscriber] Listening queue ${queue}`);
+    console.log(`[Subscriber] Listening queue ${queue} on ${config.rabbitMQ}`);
 
     this.channel.consume(queue, (message: amqp.Message) => {
         console.log(`[Subscriber] ${(new Date).toLocaleTimeString()} - Received a message from queue ${queue}:`);
